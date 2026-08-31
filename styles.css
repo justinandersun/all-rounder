@@ -59,6 +59,14 @@ h1 {
   font-weight: bold;
 }
 
+.strapline {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0.6rem 0 0;
+  color: var(--od-green-light);
+}
+
 /* Section panels */
 .panel {
   margin-bottom: 2rem;
@@ -86,9 +94,20 @@ p {
   font-size: 0.95rem;
 }
 
+.callout {
+  margin: 1.1rem 0 0;
+  padding: 0.8rem 0;
+  border-top: 1px solid var(--od-green);
+  border-bottom: 1px solid var(--od-green);
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+
 /* Grade table */
 .grade-table {
   border-collapse: collapse;
+  width: 100%;
   margin: 0.5rem 0 1.25rem;
   font-size: 0.9rem;
 }
@@ -96,7 +115,7 @@ p {
 .grade-table th,
 .grade-table td {
   border: 1px solid var(--od-green);
-  padding: 0.35rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   text-align: center;
 }
 
@@ -109,6 +128,24 @@ p {
 
 .grade-table tbody th {
   background: var(--cream-dark);
+  width: 3rem;
+}
+
+.grade-table .grade-score {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.grade-table .grade-desc {
+  text-align: left;
+}
+
+.grade-table tbody .grade-desc {
+  color: var(--od-green-light);
+}
+
+.grade-desc strong {
+  color: var(--od-green);
 }
 
 /* Stats form */
@@ -287,7 +324,7 @@ button:active {
   font-weight: normal;
 }
 
-.test-table tfoot td {
+.totals-body td {
   background: var(--cream-dark);
   font-weight: bold;
 }
@@ -298,20 +335,36 @@ button:active {
   letter-spacing: 0.1em;
 }
 
-.total-label-right {
-  text-align: right;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: 0.75rem;
-}
-
 .total-score-cell {
   text-align: center;
 }
 
-#total-score,
-#total-grade {
+#total-score {
   font-size: 1.1rem;
+}
+
+/* Grade banner */
+.grade-banner {
+  text-align: center;
+  margin: 1.75rem 0 0;
+}
+
+.grade-banner-label {
+  font-family: "Arial Black", "Arial Bold", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--od-green-light);
+}
+
+.grade-banner-value {
+  font-family: "Arial Black", "Arial Bold", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 2.75rem;
+  letter-spacing: 0.05em;
+  color: var(--od-green);
+  margin-left: 0.5rem;
 }
 
 /* Share row */
@@ -363,6 +416,15 @@ button:active {
 
 .disclosure summary::-webkit-details-marker {
   display: none;
+}
+
+.disclosure summary h3 {
+  margin: 0;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
 }
 
 .disclosure summary::after {
@@ -419,5 +481,56 @@ button:active {
 
   .stats-fields {
     flex-direction: column;
+  }
+}
+
+/* Print: a blank, fillable field-form version of the page */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .sheet {
+    max-width: none;
+    outline: none;
+    border-width: 2px;
+  }
+
+  .table-scroll {
+    overflow: visible;
+  }
+
+  .test-table {
+    min-width: 0;
+  }
+
+  .test-table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #calculate-btn,
+  .share-row,
+  .disclosures {
+    display: none !important;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  select {
+    border: none;
+    border-bottom: 1px solid var(--od-green);
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+    padding-left: 0;
   }
 }

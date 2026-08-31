@@ -3,7 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The All-Rounder — A General Physical Fitness Test for Men</title>
+<title>The All-Rounder — A General Physical Fitness Test</title>
+<meta name="description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E. Enter your height and weight to calculate the benchmarks you should strive for.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="The All-Rounder">
+<meta property="og:description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E.">
+<meta property="og:image" content="og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The All-Rounder">
+<meta name="twitter:description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E.">
+<meta name="twitter:image" content="og-image.png">
+
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -20,40 +34,71 @@
     <p>
       Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
       the daily physical demands that once kept men capable. Left unchecked,
-      this comfort produces soft, weak, and fragile bodies. This test sets out a fixed, proven
-      standard of general physical fitness: strength, endurance, mobility, and work capacity,
-      measured against benchmarks a man can actually train toward. Physical fitness is the
-      foundation on which the rest of life is built, and it is worth deliberate investment. Every
-      event here can be trained and tested with a barbell, a stopwatch, and open ground.
+      this comfort produces soft, weak, and fragile bodies.
+    </p>
+    <p>
+      No single discipline is enough. To score well, you have to lift, pull, carry, sprint, run,
+      swim, and move well. This test sets out a practical, evidence-informed standard of general
+      physical fitness: strength, endurance, mobility, and work capacity, measured against
+      benchmarks a man can actually train toward. Physical fitness is the foundation on which the
+      rest of life is built, so it is worth deliberate investment.
     </p>
   </section>
 
   <section class="panel">
     <h2>How It Works</h2>
     <p>
-      The test is designed to be completed in one day. It spans 15 events and offers 100 total points.
+      The test is designed to be completed in one day. It spans 15 events worth 100 total points, evaluated on one standard.
     </p>
     <p>
       Every event is scored against a fixed benchmark drawn from your height or bodyweight. Four
-      movement checks are pass/fail and worth one point each. The remaining events award partial credit. Meeting or exceeding the
-      benchmark earns full points, and any shortfall costs points. Scoring at least one point on all 15 events earns one additional point. Your total score
-      determines your grade:
+      movement checks are pass/fail and worth one point each. The remaining events award partial
+      credit: meeting or exceeding the benchmark earns full points, and any shortfall costs points.
+    </p>
+    <p>
+      A valid attempt at all 15 events earns one additional point toward your total. A letter
+      grade is awarded only once all 15 events have been attempted:
     </p>
     <table class="grade-table">
       <thead>
-        <tr><th>Grade</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+        <tr><th class="grade-score">Score</th><th>Grade</th><th class="grade-desc">Interpretation</th></tr>
       </thead>
       <tbody>
-        <tr><th>Score</th><td>90&ndash;100</td><td>80&ndash;89</td><td>70&ndash;79</td><td>60&ndash;69</td><td>&lt;60</td></tr>
+        <tr>
+          <td class="grade-score">90&ndash;100</td>
+          <th>A</th>
+          <td class="grade-desc"><strong>All-Rounder.</strong> Broadly capable across every major domain, with no meaningful weaknesses.</td>
+        </tr>
+        <tr>
+          <td class="grade-score">80&ndash;89</td>
+          <th>B</th>
+          <td class="grade-desc"><strong>Fit.</strong> Strong general fitness with room to improve in one or two areas.</td>
+        </tr>
+        <tr>
+          <td class="grade-score">70&ndash;79</td>
+          <th>C</th>
+          <td class="grade-desc"><strong>Baseline.</strong> Meets a reasonable floor of general fitness, but has several clear weaknesses to work on.</td>
+        </tr>
+        <tr>
+          <td class="grade-score">60&ndash;69</td>
+          <th>D</th>
+          <td class="grade-desc"><strong>Developing.</strong> Some capability is present, but overall fitness is below the intended baseline.</td>
+        </tr>
+        <tr>
+          <td class="grade-score">&lt;60</td>
+          <th>E</th>
+          <td class="grade-desc"><strong>Unfit.</strong> Significant gaps across multiple domains; focus on building physical capacity.</td>
+        </tr>
       </tbody>
     </table>
+
+    <p>100 means no weaknesses. You receive no bonus points for specialization.</p>
   </section>
 
   <section class="panel">
     <h2>Calculate Your Benchmarks</h2>
     <p>
-      Enter your height and weight to calculate the benchmarks you should strive for below.
-      Then record your performance on each event in the table to see your score.
+      Enter your height and weight below to calculate the benchmarks you should strive for.
     </p>
 
     <form id="stats-form" class="stats-form">
@@ -77,10 +122,15 @@
       </div>
       <button type="submit" id="calculate-btn">Calculate</button>
     </form>
+
+     <p>
+      <br>
+      Next, record your performance on each event in the table to receive your total score.
+    </p>
   </section>
 
   <section class="panel">
-    <h2>The Test</h2>
+    <h2>The Standard</h2>
     <div class="table-scroll">
       <table class="test-table" id="test-table">
         <thead>
@@ -95,26 +145,29 @@
         <tbody id="test-table-body">
           <!-- rows injected by script.js -->
         </tbody>
-        <tfoot>
+        <tbody class="totals-body">
           <tr>
-            <td colspan="2" class="total-label">TOTAL</td>
-            <td></td>
-            <td class="total-label-right">GRADE: <span id="total-grade">E</span></td>
+            <td colspan="4" class="total-label">TOTAL</td>
             <td class="total-score-cell"><span id="total-score">0</span></td>
           </tr>
-        </tfoot>
+        </tbody>
       </table>
     </div>
   </section>
 
+  <div class="grade-banner">
+    <span class="grade-banner-label">Your General Fitness Grade:</span>
+    <span class="grade-banner-value" id="total-grade">&mdash;</span>
+  </div>
+
   <div class="share-row">
-    <button id="share-btn" type="button">Share Your Results!</button>
+    <button id="share-btn" type="button">Share Your Results</button>
   </div>
 
   <footer class="masthead footer">
     <div class="disclosures">
       <details class="disclosure">
-        <summary>Methodology</summary>
+        <summary><h3>Methodology</h3></summary>
         <div class="disclosure-content">
           <p>
             The All-Rounder is a practical standard for general male fitness. Its benchmarks draw
@@ -141,7 +194,7 @@
       </details>
 
       <details class="disclosure">
-        <summary>Disclaimer</summary>
+        <summary><h3>Disclaimer</h3></summary>
         <div class="disclosure-content">
           <p>
             The All-Rounder is an independently developed fitness challenge and has not been
@@ -159,7 +212,7 @@
       </details>
 
       <details class="disclosure">
-        <summary>Sources</summary>
+        <summary><h3>Sources</h3></summary>
         <div class="disclosure-content">
           <ol class="sources-list">
             <li>McKay, Brett &amp; Kate, with Matt Reynolds. &ldquo;How Much Ya Bench? Strength Benchmarks for Men.&rdquo; <em>The Art of Manliness</em>, 2021.</li>
@@ -174,7 +227,7 @@
       </details>
     </div>
 
-    <p class="copyright">&copy; 2026 Justin Anderson. All rights reserved.</p>
+    <p class="copyright">Made with ❤️ by <a href="https://andersun.com" target="_blank">Justin Anderson</a></p>
   </footer>
 
 </div>

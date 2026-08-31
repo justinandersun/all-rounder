@@ -20,3 +20,4 @@ Then visit `http://localhost:8000`.
 - `index.html` — page structure and content
 - `styles.css` — 1940s field-form styling
 - `script.js` — benchmark and scoring logic, URL sharing
+- `og-image.png` — social share preview image (1200×630)
