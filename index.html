@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The All-Rounder — A General Physical Fitness Test for Men</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <h1>The All-Rounder</h1>
+    <p class="subtitle">A General Physical Fitness Test</p>
+  </header>
+
+  <section class="panel">
+    <h2>Why It Matters</h2>
+    <p>
+      Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
+      the daily physical demands that once kept men capable almost by accident. Left unchecked,
+      this comfort produces soft, weak, and fragile bodies. This test sets out a fixed, proven
+      standard of general physical fitness: strength, endurance, mobility, and work capacity,
+      measured against benchmarks a man can actually train toward. Physical fitness is the
+      foundation on which the rest of life is built, and it is worth deliberate investment. Every
+      event here can be trained and tested with a barbell, a stopwatch, and open ground. No
+      specialized equipment is required.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>How It Works</h2>
+    <p>
+      The test is completed in one day across 15 events, worth 100 points total. Your total score
+      determines your grade:
+    </p>
+    <table class="grade-table">
+      <thead>
+        <tr><th>Grade</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>Score</th><td>90&ndash;100</td><td>80&ndash;89</td><td>70&ndash;79</td><td>60&ndash;69</td><td>&lt;60</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Enter your height and weight below to calculate the benchmarks you should strive for.
+      Then record your performance on each event to see your score.
+    </p>
+
+    <form id="stats-form" class="stats-form">
+      <div class="field-group">
+        <label for="height-ft">Height</label>
+        <div class="inline-fields">
+          <input type="number" id="height-ft" min="0" max="8" inputmode="numeric" placeholder="FT" required>
+          <span class="unit-label">ft</span>
+          <input type="number" id="height-in" min="0" max="11" inputmode="numeric" placeholder="IN" required>
+          <span class="unit-label">in</span>
+        </div>
+      </div>
+      <div class="field-group">
+        <label for="weight-lbs">Weight</label>
+        <div class="inline-fields">
+          <input type="number" id="weight-lbs" min="0" max="600" inputmode="numeric" placeholder="LBS" required>
+          <span class="unit-label">lbs</span>
+        </div>
+      </div>
+      <button type="submit" id="calculate-btn">Calculate Benchmarks</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>The Test</h2>
+    <div class="table-scroll">
+      <table class="test-table" id="test-table">
+        <thead>
+          <tr>
+            <th class="col-num">#</th>
+            <th class="col-event">Event</th>
+            <th class="col-benchmark">Benchmark</th>
+            <th class="col-performance">Performance</th>
+            <th class="col-score">Score</th>
+          </tr>
+        </thead>
+        <tbody id="test-table-body">
+          <!-- rows injected by script.js -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2" class="total-label">TOTAL</td>
+            <td></td>
+            <td class="total-label-right">GRADE: <span id="total-grade">E</span></td>
+            <td class="total-score-cell"><span id="total-score">0</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <footer class="masthead footer">
+    <button id="share-btn" type="button">Share This Link</button>
+
+    <div class="disclosures">
+      <details class="disclosure">
+        <summary>Methodology</summary>
+        <div class="disclosure-content">
+          <p>
+            The All-Rounder is a practical standard for general male fitness. Its benchmarks draw
+            from established strength standards, field fitness tests, coaching benchmarks for
+            physical capability, and historical all-around fitness standards.[1&ndash;5] Functional
+            movement tests are also informed by research associating balance and the ability to
+            rise from the floor with health and functional outcomes later in life.[6&ndash;7]
+          </p>
+          <p>
+            The standards are intentionally broad rather than specialized. They are designed to
+            represent a solid intermediate level of strength, conditioning, muscular endurance,
+            power, movement, grip, carrying capacity, running, and swimming. Meeting every
+            benchmark should require regular training across multiple physical domains without
+            requiring elite performance in any one of them.
+          </p>
+          <p>
+            The All-Rounder is a <strong>standard</strong>, not a population norm. A population
+            norm describes how a person compares with peers; a standard defines a level of
+            capability worth achieving and maintaining. The benchmarks therefore do not adjust
+            downward with age. The goal is to measure the physical capability you possess, not
+            your fitness relative to others your age.
+          </p>
+        </div>
+      </details>
+
+      <details class="disclosure">
+        <summary>Disclaimer</summary>
+        <div class="disclosure-content">
+          <p>
+            The All-Rounder is an independently developed fitness challenge and has not been
+            clinically validated as a complete fitness assessment. Its benchmarks should not be
+            interpreted as medical standards, diagnoses, or guarantees of health, longevity, or
+            ability to perform any particular occupation or emergency task.
+          </p>
+          <p>
+            Exercise and fitness testing involve risk, particularly maximal or near-maximal
+            lifting, running, and swimming. Participants are responsible for exercising within
+            their abilities, using appropriate technique and safety equipment, and seeking
+            qualified medical or professional guidance when appropriate.
+          </p>
+        </div>
+      </details>
+
+      <details class="disclosure">
+        <summary>Sources</summary>
+        <div class="disclosure-content">
+          <ol class="sources-list">
+            <li>McKay, Brett &amp; Kate, with Matt Reynolds. &ldquo;How Much Ya Bench? Strength Benchmarks for Men.&rdquo; <em>The Art of Manliness</em>, 2021.</li>
+            <li>McKay, Brett &amp; Kate, with Dan John. &ldquo;Physical Benchmarks Every Man Should Meet, At Every Age.&rdquo; <em>The Art of Manliness</em>, 2022.</li>
+            <li>McKay, Brett &amp; Kate. &ldquo;Every Man Should Be Able to Save His Own Life: 5 Fitness Benchmarks a Man Must Master.&rdquo; Based on Earle Liederman&rsquo;s <em>Endurance</em> (1926). <em>The Art of Manliness</em>.</li>
+            <li>Campbell, Adam &amp; Comstock. &ldquo;10 Standards to Assess Your Fitness Level.&rdquo; <em>Men&rsquo;s Health</em>, 2015.</li>
+            <li>The Cooper Institute. &ldquo;50 Years of the Cooper 12-Minute Run&rdquo; and &ldquo;Fitness Norms and Fitness Standards are Apples and Oranges.&rdquo;</li>
+            <li>de Brito, L.B.B., et al. &ldquo;Ability to Sit and Rise From the Floor as a Predictor of All-Cause Mortality.&rdquo; <em>European Journal of Preventive Cardiology</em>, 2014; 21(7):892&ndash;898.</li>
+            <li>Ara&uacute;jo, C.G.S., et al. &ldquo;Successful 10-Second One-Legged Stance Performance Predicts Survival in Middle-Aged and Older Individuals.&rdquo; <em>British Journal of Sports Medicine</em>, 2022; 56(17):975&ndash;980.</li>
+          </ol>
+        </div>
+      </details>
+    </div>
+
+    <p class="copyright">&copy; 2026 The All-Rounder. For general physical training purposes only.</p>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
