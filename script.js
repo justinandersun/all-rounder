@@ -71,7 +71,7 @@
       benchmarkSec: 720, increment: 20,
     },
     {
-      num: 15, id: "swim", name: "½-Mile Swim",
+      num: 15, id: "swim", name: "0.5-Mile Swim",
       criteria: "≤ 20:00", points: 10, kind: "time_over",
       benchmarkSec: 1200, increment: 20,
     },
@@ -186,65 +186,65 @@
     }
   }
 
-  // ---------- Score + attempted per event ----------
+  // ---------- Score per event ----------
   function computeEvent(ev, stats) {
     switch (ev.kind) {
       case "pass_fail": {
         const v = val(fieldId(ev));
-        if (v === "") return { score: 0, attempted: false, invalid: false };
-        return { score: v === "pass" ? ev.points : 0, attempted: true, invalid: false };
+        if (v === "") return { score: 0, invalid: false };
+        return { score: v === "pass" ? ev.points : 0, invalid: false };
       }
       case "reps_cap": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const reps = parseFloat(raw);
-        if (!Number.isFinite(reps) || reps < 0) return { score: 0, attempted: false, invalid: true };
-        return { score: clamp(Math.floor(reps), 0, ev.points), attempted: true, invalid: false };
+        if (!Number.isFinite(reps) || reps < 0) return { score: 0, invalid: true };
+        return { score: clamp(Math.floor(reps), 0, ev.points), invalid: false };
       }
       case "strength_pct": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const lifted = parseFloat(raw);
-        if (!Number.isFinite(lifted) || lifted < 0) return { score: 0, attempted: false, invalid: true };
-        if (!stats.valid) return { score: 0, attempted: true, invalid: false };
+        if (!Number.isFinite(lifted) || lifted < 0) return { score: 0, invalid: true };
+        if (!stats.valid) return { score: 0, invalid: false };
         const benchmarkLbs = ev.multiplier * stats.weight;
         const shortfallPct = Math.max(0, ((benchmarkLbs - lifted) / stats.weight) * 100);
-        return { score: steppedScore(shortfallPct, 5, ev.points), attempted: true, invalid: false };
+        return { score: steppedScore(shortfallPct, 5, ev.points), invalid: false };
       }
       case "count_shortfall": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const reps = parseFloat(raw);
-        if (!Number.isFinite(reps) || reps < 0) return { score: 0, attempted: false, invalid: true };
+        if (!Number.isFinite(reps) || reps < 0) return { score: 0, invalid: true };
         const missed = Math.max(0, ev.benchmarkReps - reps);
-        return { score: steppedScore(missed, ev.increment, ev.points), attempted: true, invalid: false };
+        return { score: steppedScore(missed, ev.increment, ev.points), invalid: false };
       }
       case "distance_shortfall": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const feet = parseFloat(raw);
-        if (!Number.isFinite(feet) || feet < 0) return { score: 0, attempted: false, invalid: true };
+        if (!Number.isFinite(feet) || feet < 0) return { score: 0, invalid: true };
         const shortfall = Math.max(0, ev.benchmarkFeet - feet);
-        return { score: steppedScore(shortfall, ev.increment, ev.points), attempted: true, invalid: false };
+        return { score: steppedScore(shortfall, ev.increment, ev.points), invalid: false };
       }
       case "time_shortfall": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const sec = parseTime(raw);
-        if (sec == null) return { score: 0, attempted: false, invalid: true };
+        if (sec == null) return { score: 0, invalid: true };
         const shortfall = Math.max(0, ev.benchmarkSec - sec);
-        return { score: steppedScore(shortfall, ev.increment, ev.points), attempted: true, invalid: false };
+        return { score: steppedScore(shortfall, ev.increment, ev.points), invalid: false };
       }
       case "time_over": {
         const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
+        if (raw === "") return { score: 0, invalid: false };
         const sec = parseTime(raw);
-        if (sec == null) return { score: 0, attempted: false, invalid: true };
+        if (sec == null) return { score: 0, invalid: true };
         const over = Math.max(0, sec - ev.benchmarkSec);
-        return { score: steppedScore(over, ev.increment, ev.points), attempted: true, invalid: false };
+        return { score: steppedScore(over, ev.increment, ev.points), invalid: false };
       }
       default:
-        return { score: 0, attempted: false, invalid: false };
+        return { score: 0, invalid: false };
     }
   }
 
@@ -262,7 +262,7 @@
     `).join("") + `
       <tr>
         <td colspan="2" class="col-event">Completion</td>
-        <td class="col-benchmark" id="bench-completion">Valid attempt at all 15 events</td>
+        <td class="col-benchmark" id="bench-completion">Score at least one point on all 15 events</td>
         <td class="col-performance">—</td>
         <td class="col-score"><span class="score-earned" id="score-completion">0</span><span class="score-sep">/</span><span class="score-avail">1</span></td>
       </tr>
@@ -273,20 +273,20 @@
   function recalcAll() {
     const stats = getStats();
     let total = 0;
-    let allAttempted = true;
+    let allScored = true;
 
     EVENTS.forEach((ev) => {
       const result = computeEvent(ev, stats);
       document.getElementById(`score-${ev.num}`).textContent = result.score;
       total += result.score;
-      if (!result.attempted) allAttempted = false;
+      if (result.score < 1) allScored = false;
 
       // mark invalid inputs
       const el = document.getElementById(fieldId(ev));
       if (el) el.classList.toggle("invalid", !!result.invalid);
     });
 
-    const completionScore = allAttempted ? 1 : 0;
+    const completionScore = allScored ? 1 : 0;
     document.getElementById("score-completion").textContent = completionScore;
     total += completionScore;
 

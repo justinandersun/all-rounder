@@ -114,18 +114,26 @@ p {
 /* Stats form */
 .stats-form {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
   margin-top: 1rem;
-  padding: 1rem;
+  padding: 1.25rem 1rem;
   border: 2px solid var(--od-green);
   background: var(--cream);
+}
+
+.stats-fields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
 .field-group {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.3rem;
 }
 
@@ -306,6 +314,12 @@ button:active {
   font-size: 1.1rem;
 }
 
+/* Share row */
+.share-row {
+  text-align: center;
+  margin: 1.5rem 0 2rem;
+}
+
 /* Footer */
 .footer {
   border-bottom: none;
@@ -313,10 +327,6 @@ button:active {
   padding-top: 1.5rem;
   margin-top: 2rem;
   margin-bottom: 0;
-}
-
-.footer button {
-  margin-bottom: 1rem;
 }
 
 .copyright {
@@ -407,8 +417,7 @@ button:active {
     font-size: 2rem;
   }
 
-  .stats-form {
+  .stats-fields {
     flex-direction: column;
-    align-items: stretch;
   }
 }

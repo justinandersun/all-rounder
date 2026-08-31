@@ -19,20 +19,24 @@
     <h2>Why It Matters</h2>
     <p>
       Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
-      the daily physical demands that once kept men capable almost by accident. Left unchecked,
+      the daily physical demands that once kept men capable. Left unchecked,
       this comfort produces soft, weak, and fragile bodies. This test sets out a fixed, proven
       standard of general physical fitness: strength, endurance, mobility, and work capacity,
       measured against benchmarks a man can actually train toward. Physical fitness is the
       foundation on which the rest of life is built, and it is worth deliberate investment. Every
-      event here can be trained and tested with a barbell, a stopwatch, and open ground. No
-      specialized equipment is required.
+      event here can be trained and tested with a barbell, a stopwatch, and open ground.
     </p>
   </section>
 
   <section class="panel">
     <h2>How It Works</h2>
     <p>
-      The test is completed in one day across 15 events, worth 100 points total. Your total score
+      The test is designed to be completed in one day. It spans 15 events and offers 100 total points.
+    </p>
+    <p>
+      Every event is scored against a fixed benchmark drawn from your height or bodyweight. Four
+      movement checks are pass/fail and worth one point each. The remaining events award partial credit. Meeting or exceeding the
+      benchmark earns full points, and any shortfall costs points. Scoring at least one point on all 15 events earns one additional point. Your total score
       determines your grade:
     </p>
     <table class="grade-table">
@@ -43,29 +47,35 @@
         <tr><th>Score</th><td>90&ndash;100</td><td>80&ndash;89</td><td>70&ndash;79</td><td>60&ndash;69</td><td>&lt;60</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <section class="panel">
+    <h2>Calculate Your Benchmarks</h2>
     <p>
-      Enter your height and weight below to calculate the benchmarks you should strive for.
-      Then record your performance on each event to see your score.
+      Enter your height and weight to calculate the benchmarks you should strive for below.
+      Then record your performance on each event in the table to see your score.
     </p>
 
     <form id="stats-form" class="stats-form">
-      <div class="field-group">
-        <label for="height-ft">Height</label>
-        <div class="inline-fields">
-          <input type="number" id="height-ft" min="0" max="8" inputmode="numeric" placeholder="FT" required>
-          <span class="unit-label">ft</span>
-          <input type="number" id="height-in" min="0" max="11" inputmode="numeric" placeholder="IN" required>
-          <span class="unit-label">in</span>
+      <div class="stats-fields">
+        <div class="field-group">
+          <label for="height-ft">Height</label>
+          <div class="inline-fields">
+            <input type="number" id="height-ft" min="0" max="8" inputmode="numeric" placeholder="FT" required>
+            <span class="unit-label">ft</span>
+            <input type="number" id="height-in" min="0" max="11" inputmode="numeric" placeholder="IN" required>
+            <span class="unit-label">in</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="weight-lbs">Weight</label>
+          <div class="inline-fields">
+            <input type="number" id="weight-lbs" min="0" max="600" inputmode="numeric" placeholder="LBS" required>
+            <span class="unit-label">lbs</span>
+          </div>
         </div>
       </div>
-      <div class="field-group">
-        <label for="weight-lbs">Weight</label>
-        <div class="inline-fields">
-          <input type="number" id="weight-lbs" min="0" max="600" inputmode="numeric" placeholder="LBS" required>
-          <span class="unit-label">lbs</span>
-        </div>
-      </div>
-      <button type="submit" id="calculate-btn">Calculate Benchmarks</button>
+      <button type="submit" id="calculate-btn">Calculate</button>
     </form>
   </section>
 
@@ -97,9 +107,11 @@
     </div>
   </section>
 
-  <footer class="masthead footer">
-    <button id="share-btn" type="button">Share This Link</button>
+  <div class="share-row">
+    <button id="share-btn" type="button">Share Your Results!</button>
+  </div>
 
+  <footer class="masthead footer">
     <div class="disclosures">
       <details class="disclosure">
         <summary>Methodology</summary>
@@ -162,7 +174,7 @@
       </details>
     </div>
 
-    <p class="copyright">&copy; 2026 The All-Rounder. For general physical training purposes only.</p>
+    <p class="copyright">&copy; 2026 Justin Anderson. All rights reserved.</p>
   </footer>
 
 </div>
