@@ -68,12 +68,12 @@
     {
       num: 14, id: "run", name: "1.5-Mile Run",
       criteria: "≤ 12:00", points: 10, kind: "time_over",
-      benchmarkSec: 720, increment: 20,
+      benchmarkSec: 720, increment: 30,
     },
     {
       num: 15, id: "swim", name: "0.5-Mile Swim",
       criteria: "≤ 20:00", points: 10, kind: "time_over",
-      benchmarkSec: 1200, increment: 20,
+      benchmarkSec: 1200, increment: 120,
     },
   ];
 

@@ -29,77 +29,79 @@
     <p class="subtitle">A General Physical Fitness Test</p>
   </header>
 
-  <section class="panel">
-    <h2>Why It Matters</h2>
-    <p>
-      Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
-      the daily physical demands that once kept men capable. Left unchecked,
-      this comfort produces soft, weak, and fragile bodies.
-    </p>
-    <p>
-      No single discipline is enough. To score well, you have to lift, pull, carry, sprint, run,
-      swim, and move well. This test sets out a practical, evidence-informed standard of general
-      physical fitness: strength, endurance, mobility, and work capacity, measured against
-      benchmarks a man can actually train toward. Physical fitness is the foundation on which the
-      rest of life is built, so it is worth deliberate investment.
-    </p>
-  </section>
+  <details class="disclosure">
+    <summary><h2>Why It Matters</h2></summary>
+    <div class="disclosure-content">
+      <p>
+        Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
+        the daily physical demands that once kept men capable. Left unchecked,
+        this comfort produces soft, weak, and fragile bodies.
+      </p>
+      <p>
+        No single discipline is enough. To score well, you have to lift, pull, carry, sprint, run,
+        swim, and move well. This test sets out a practical, evidence-informed standard of general
+        physical fitness measured against
+        benchmarks a man can actually train toward. Physical fitness is the foundation on which the
+        rest of life is built, so it is worth deliberate investment.
+      </p>
+    </div>
+  </details>
 
-  <section class="panel">
-    <h2>How It Works</h2>
-    <p>
-      The test is designed to be completed in one day. It spans 15 events worth 100 total points, evaluated on one standard.
-    </p>
-    <p>
-      Every event is scored against a fixed benchmark drawn from your height or bodyweight. Four
-      movement checks are pass/fail and worth one point each. The remaining events award partial
-      credit: meeting or exceeding the benchmark earns full points, and any shortfall costs points.
-    </p>
-    <p>
-      A valid attempt at all 15 events earns one additional point toward your total. A letter
-      grade is awarded only once all 15 events have been attempted:
-    </p>
-    <table class="grade-table">
-      <thead>
-        <tr><th class="grade-score">Score</th><th>Grade</th><th class="grade-desc">Interpretation</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="grade-score">90&ndash;100</td>
-          <th>A</th>
-          <td class="grade-desc"><strong>All-Rounder.</strong> Broadly capable across every major domain, with no meaningful weaknesses.</td>
-        </tr>
-        <tr>
-          <td class="grade-score">80&ndash;89</td>
-          <th>B</th>
-          <td class="grade-desc"><strong>Fit.</strong> Strong general fitness with room to improve in one or two areas.</td>
-        </tr>
-        <tr>
-          <td class="grade-score">70&ndash;79</td>
-          <th>C</th>
-          <td class="grade-desc"><strong>Baseline.</strong> Meets a reasonable floor of general fitness, but has several clear weaknesses to work on.</td>
-        </tr>
-        <tr>
-          <td class="grade-score">60&ndash;69</td>
-          <th>D</th>
-          <td class="grade-desc"><strong>Developing.</strong> Some capability is present, but overall fitness is below the intended baseline.</td>
-        </tr>
-        <tr>
-          <td class="grade-score">&lt;60</td>
-          <th>E</th>
-          <td class="grade-desc"><strong>Unfit.</strong> Significant gaps across multiple domains; focus on building physical capacity.</td>
-        </tr>
-      </tbody>
-    </table>
+  <details class="disclosure">
+    <summary><h2>How It Works</h2></summary>
+    <div class="disclosure-content">
+      <p>
+        The test is designed to be completed in one day. It spans 15 events worth 100 total points, evaluated on one standard.
+      </p>
+      <p>
+        Every event is scored against a fixed benchmark drawn from your height or bodyweight. Four
+        movement checks are pass/fail and worth one point each. The remaining events award partial
+        credit: meeting or exceeding the benchmark earns full points, and any shortfall costs points.
+      </p>
+      <p>
+        A valid attempt at all 15 events earns one additional point toward your total. A letter
+        grade is awarded only once all 15 events have been attempted:
+      </p>
+      <table class="grade-table">
+        <thead>
+          <tr><th class="grade-score">Score</th><th>Grade</th><th class="grade-desc">Interpretation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="grade-score">90&ndash;100</td>
+            <th>A</th>
+            <td class="grade-desc"><strong>All-Rounder.</strong> Broadly capable with no meaningful weaknesses.</td>
+          </tr>
+          <tr>
+            <td class="grade-score">80&ndash;89</td>
+            <th>B</th>
+            <td class="grade-desc"><strong>Fit.</strong> Strong general fitness with room to improve.</td>
+          </tr>
+          <tr>
+            <td class="grade-score">70&ndash;79</td>
+            <th>C</th>
+            <td class="grade-desc"><strong>Baseline.</strong> Meets a reasonable floor of general fitness, but has clear weaknesses.</td>
+          </tr>
+          <tr>
+            <td class="grade-score">60&ndash;69</td>
+            <th>D</th>
+            <td class="grade-desc"><strong>Developing.</strong> Some capability is present, but overall fitness is below the baseline.</td>
+          </tr>
+          <tr>
+            <td class="grade-score">&lt;60</td>
+            <th>E</th>
+            <td class="grade-desc"><strong>Unfit.</strong> Significant fitness gaps; focus on building physical capacity.</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <p>100 means no weaknesses. You receive no bonus points for specialization.</p>
-  </section>
+      <p>100 means no weaknesses. You receive no bonus points for specialization.</p>
+    </div>
+  </details>
 
-  <section class="panel">
-    <h2>Calculate Your Benchmarks</h2>
-    <p>
-      Enter your height and weight below to calculate the benchmarks you should strive for.
-    </p>
+  <section class="panel panel-last">
+    <h2>The Standard</h2>
+    <p>Enter your height and weight to calculate your benchmarks. Then record your performance on each event to receive a grade.</p>
 
     <form id="stats-form" class="stats-form">
       <div class="stats-fields">
@@ -119,18 +121,10 @@
             <span class="unit-label">lbs</span>
           </div>
         </div>
+        <button type="submit" id="calculate-btn">Calculate</button>
       </div>
-      <button type="submit" id="calculate-btn">Calculate</button>
     </form>
 
-     <p>
-      <br>
-      Next, record your performance on each event in the table to receive your total score.
-    </p>
-  </section>
-
-  <section class="panel">
-    <h2>The Standard</h2>
     <div class="table-scroll">
       <table class="test-table" id="test-table">
         <thead>
@@ -227,7 +221,7 @@
       </details>
     </div>
 
-    <p class="copyright">Made with ❤️ by <a href="https://andersun.com" target="_blank">Justin Anderson</a></p>
+    <p class="copyright">Made by <a href="https://andersun.com" target="_blank">Justin Anderson</a>.</p>
   </footer>
 
 </div>
