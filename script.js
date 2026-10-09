@@ -1,124 +1,15 @@
 (() => {
   "use strict";
 
-  // ---------- Event definitions ----------
-  // kind determines input markup and scoring formula. `criteria` doubles as
-  // the Benchmark column's placeholder text before stats are calculated.
-  const EVENTS = [
-    {
-      num: 1, id: "broad_jump", name: "Standing Broad Jump",
-      criteria: "Jump ≥ your height", points: 1, kind: "pass_fail",
-    },
-    {
-      num: 2, id: "deep_squat", name: "Deep Squat",
-      criteria: "Hold for 30 sec", points: 1, kind: "pass_fail",
-    },
-    {
-      num: 3, id: "floor_rise", name: "Floor Rise",
-      criteria: "Feet → floor → feet without hands", points: 1, kind: "pass_fail",
-    },
-    {
-      num: 4, id: "single_leg_balance", name: "Single-Leg Balance",
-      criteria: "Hold 10 sec on each leg", points: 1, kind: "pass_fail",
-    },
-    {
-      num: 5, id: "pullups", name: "Pullups",
-      criteria: "10 strict reps", points: 10, kind: "reps_cap",
-    },
-    {
-      num: 6, id: "squat", name: "Squat",
-      criteria: "1.50× bodyweight × 3 reps", points: 10, kind: "strength_pct",
-      multiplier: 1.5,
-    },
-    {
-      num: 7, id: "bench", name: "Bench Press",
-      criteria: "1.00× bodyweight × 3 reps", points: 10, kind: "strength_pct",
-      multiplier: 1.0,
-    },
-    {
-      num: 8, id: "ohp", name: "Overhead Press",
-      criteria: "0.75× bodyweight × 3 reps", points: 10, kind: "strength_pct",
-      multiplier: 0.75,
-    },
-    {
-      num: 9, id: "deadlift", name: "Deadlift",
-      criteria: "1.75× bodyweight × 3 reps", points: 10, kind: "strength_pct",
-      multiplier: 1.75,
-    },
-    {
-      num: 10, id: "pushups", name: "Pushups",
-      criteria: "30 strict reps", points: 5, kind: "count_shortfall",
-      benchmarkReps: 30, increment: 6,
-    },
-    {
-      num: 11, id: "dead_hang", name: "Dead Hang",
-      criteria: "45 sec", points: 5, kind: "time_shortfall",
-      benchmarkSec: 45, increment: 9,
-    },
-    {
-      num: 12, id: "farmer_carry", name: "Farmer Carry",
-      criteria: "Bodyweight for 100 feet", points: 5, kind: "distance_shortfall",
-      benchmarkFeet: 100, increment: 20,
-    },
-    {
-      num: 13, id: "shuttle", name: "300-Yard Shuttle",
-      criteria: "≤ 70 sec", points: 10, kind: "time_over",
-      benchmarkSec: 70, increment: 5,
-    },
-    {
-      num: 14, id: "run", name: "1.5-Mile Run",
-      criteria: "≤ 12:00", points: 10, kind: "time_over",
-      benchmarkSec: 720, increment: 30,
-    },
-    {
-      num: 15, id: "swim", name: "0.5-Mile Swim",
-      criteria: "≤ 20:00", points: 10, kind: "time_over",
-      benchmarkSec: 1200, increment: 120,
-    },
-  ];
-
-  const GRADE_BANDS = [
-    { min: 90, grade: "A" },
-    { min: 80, grade: "B" },
-    { min: 70, grade: "C" },
-    { min: 60, grade: "D" },
-    { min: -Infinity, grade: "E" },
-  ];
+  const STANDARD = window.ALL_ROUNDER_STANDARD;
+  const Scoring = window.AllRounderScoring;
+  const LEVELS = STANDARD.levels;
+  const SCORECARD_LEVELS = STANDARD.scorecardLevels.map((id) => LEVELS.find((l) => l.id === id));
 
   // ---------- Helpers ----------
-  function clamp(n, lo, hi) {
-    return Math.max(lo, Math.min(hi, n));
-  }
-
-  // Meeting the benchmark exactly (or beating it) earns full points. Any
-  // shortfall at all costs at least 1 point, and further points are lost
-  // as each additional whole increment of shortfall is crossed.
-  function steppedScore(shortfall, increment, points) {
-    if (shortfall <= 0) return points;
-    const lost = Math.ceil(shortfall / increment);
-    return clamp(points - lost, 0, points);
-  }
-
-  function parseTime(raw) {
-    if (raw == null) return null;
-    const s = String(raw).trim();
-    const m = /^(\d{1,3}):([0-5]\d)$/.exec(s);
-    if (!m) return null;
-    return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
-  }
-
-  function formatFeetInches(totalInches) {
-    const ft = Math.floor(totalInches / 12);
-    const inch = totalInches % 12;
-    return `${ft}'${inch}"`;
-  }
-
-  function gradeFor(total) {
-    return GRADE_BANDS.find((b) => total >= b.min).grade;
-  }
-
-  function fieldId(ev, suffix) {
-    return suffix ? `perf-${ev.num}-${suffix}` : `perf-${ev.num}`;
+  function checkedValue(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : "";
   }
 
   function val(id) {
@@ -126,210 +17,292 @@
     return el ? el.value : "";
   }
 
-  // ---------- Stats (height/weight) ----------
-  function getStats() {
-    const heightFt = parseFloat(val("height-ft"));
-    const heightIn = parseFloat(val("height-in"));
-    const weight = parseFloat(val("weight-lbs"));
-    const validStats =
-      Number.isFinite(heightFt) && Number.isFinite(heightIn) && Number.isFinite(weight) && weight > 0;
+  function num(raw) {
+    if (raw == null || String(raw).trim() === "") return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function fieldId(ev, suffix) {
+    return suffix ? `perf-${ev.id}-${suffix}` : `perf-${ev.id}`;
+  }
+
+  // Full name, e.g. "300-Yard Shuttle", for labels outside the scorecard.
+  function fullName(ev) {
+    return ev.distance ? `${ev.distance} ${ev.name}` : ev.name;
+  }
+
+  function levelLabel(id) {
+    return LEVELS.find((l) => l.id === id).label;
+  }
+
+  // ---------- Demographics ----------
+  function getDemographics() {
     return {
-      heightFt: Number.isFinite(heightFt) ? heightFt : null,
-      heightIn: Number.isFinite(heightIn) ? heightIn : null,
-      weight: Number.isFinite(weight) ? weight : null,
-      totalHeightInches: validStats ? heightFt * 12 + heightIn : null,
-      valid: validStats,
+      age: num(val("age")),
+      sex: checkedValue("sex"),
+      bodyweight: num(val("bodyweight")),
     };
   }
 
-  // ---------- Benchmark cell text per event ----------
-  // Before stats are calculated, shows the event's criteria as placeholder
-  // text. After calculation, weight/height-dependent events show a computed
-  // number in place of the variable; fixed events show the same criteria,
-  // just bolded (the caller applies the "calculated" state as a CSS class).
-  function benchmarkCellText(ev, stats) {
-    if (!stats.valid) return { text: ev.criteria, calculated: false };
-    if (ev.id === "broad_jump") {
-      return { text: `Jump ≥ ${formatFeetInches(Math.round(stats.totalHeightInches))}`, calculated: true };
+  function demographicMessage(demo, status) {
+    const bw = STANDARD.bodyweightLbs;
+    if (demo.age != null && !status.age) {
+      return "Standards currently cover ages 18 and up.";
     }
-    if (ev.kind === "strength_pct") {
-      return { text: `${Math.round(ev.multiplier * stats.weight)} lbs for 3 reps`, calculated: true };
+    if (demo.bodyweight != null && !status.bodyweight) {
+      return `Enter a bodyweight between ${bw.min} and ${bw.max} lbs.`;
     }
-    if (ev.kind === "distance_shortfall") {
-      return { text: `${Math.round(stats.weight)} lbs for 100 feet`, calculated: true };
+    if (!status.age || !status.sex) {
+      return "Enter your age and sex to see your benchmarks.";
     }
-    return { text: ev.criteria, calculated: true };
+    if (!status.bodyweight) {
+      return "Add your bodyweight to calibrate the barbell lifts.";
+    }
+    return "";
   }
 
-  // ---------- Input markup per event ----------
+  // ---------- Performance parsing per input type ----------
+  // Returns { value, invalid }. An empty field is { value: null, invalid: false }.
+  function readPerformance(ev) {
+    switch (ev.input) {
+      case "feet_inches": {
+        const ft = num(val(fieldId(ev, "ft")));
+        const inch = num(val(fieldId(ev, "in")));
+        if (ft == null && inch == null) return { value: null, invalid: false };
+        const f = ft ?? 0;
+        const i = inch ?? 0;
+        if (Number.isNaN(f) || Number.isNaN(i) || f < 0 || i < 0 || i >= 12) return { value: null, invalid: true };
+        return { value: f * 12 + i, invalid: false };
+      }
+      case "time":
+      case "seconds": {
+        const raw = val(fieldId(ev)).trim();
+        if (raw === "") return { value: null, invalid: false };
+        const sec = Scoring.parseTime(raw, ev.input === "seconds");
+        return sec == null || sec <= 0 ? { value: null, invalid: true } : { value: sec, invalid: false };
+      }
+      default: {
+        const n = num(val(fieldId(ev)));
+        if (n == null) return { value: null, invalid: false };
+        if (Number.isNaN(n) || n < 0) return { value: null, invalid: true };
+        return { value: ev.input === "reps" ? Math.floor(n) : n, invalid: false };
+      }
+    }
+  }
+
+  // ---------- Markup ----------
+  // Shown (and announced) beside an event's input when its value can't be read.
+  const INPUT_HINTS = {
+    lbs: "Enter a weight in pounds.",
+    reps: "Enter a number of reps.",
+    time: "Use MM:SS, e.g. 11:50.",
+    seconds: "Enter seconds, e.g. 65.4.",
+    feet_inches: "Enter feet, and inches from 0 to 11.",
+  };
+
   function inputMarkup(ev) {
-    switch (ev.kind) {
-      case "pass_fail":
+    const name = fullName(ev);
+    const hint = `hint-${ev.id}`;
+    const unit = `unit-${ev.id}`;
+    const described = `aria-describedby="${unit} ${hint}"`;
+    switch (ev.input) {
+      case "lbs":
+        return `<input type="number" id="${fieldId(ev)}" aria-label="${name} result" ${described} min="0" max="2000" inputmode="decimal" placeholder="lbs"><span class="unit-label" id="${unit}">lbs</span>`;
+      case "reps":
+        return `<input type="number" id="${fieldId(ev)}" aria-label="${name} result" ${described} min="0" max="999" inputmode="numeric" placeholder="reps"><span class="unit-label" id="${unit}">reps</span>`;
+      case "time":
+        // Standard keyboard so ":" is reachable on phones.
+        return `<input type="text" id="${fieldId(ev)}" aria-label="${name} result, minutes and seconds" aria-describedby="${hint}" placeholder="MM:SS" maxlength="8" autocomplete="off">`;
+      case "seconds":
+        return `<input type="text" id="${fieldId(ev)}" aria-label="${name} result" ${described} placeholder="sec" maxlength="8" inputmode="decimal" autocomplete="off"><span class="unit-label" id="${unit}">sec</span>`;
+      case "feet_inches":
         return `
-          <select id="${fieldId(ev)}">
-            <option value="">—</option>
-            <option value="pass">Pass</option>
-            <option value="fail">Fail</option>
-          </select>`;
-      case "reps_cap":
-      case "count_shortfall":
-        return `<input type="number" id="${fieldId(ev)}" min="0" max="999" inputmode="numeric" placeholder="reps">`;
-      case "strength_pct":
-        return `<input type="number" id="${fieldId(ev)}" min="0" max="9999" inputmode="numeric" placeholder="lbs">`;
-      case "distance_shortfall":
-        return `<input type="number" id="${fieldId(ev)}" min="0" max="9999" inputmode="numeric" placeholder="feet">`;
-      case "time_shortfall":
-      case "time_over":
-        return `<input type="text" id="${fieldId(ev)}" placeholder="MM:SS" maxlength="6">`;
+          <input type="number" id="${fieldId(ev, "ft")}" aria-label="${name} feet" aria-describedby="${hint}" min="0" max="15" inputmode="numeric" placeholder="ft" class="short">
+          <span class="unit-label" aria-hidden="true">ft</span>
+          <input type="number" id="${fieldId(ev, "in")}" aria-label="${name} inches" aria-describedby="${hint}" min="0" max="11.9" step="any" inputmode="decimal" placeholder="in" class="short">
+          <span class="unit-label" aria-hidden="true">in</span>`;
       default:
         return "";
     }
   }
 
-  // ---------- Score + attempted per event ----------
-  function computeEvent(ev, stats) {
-    switch (ev.kind) {
-      case "pass_fail": {
-        const v = val(fieldId(ev));
-        if (v === "") return { score: 0, attempted: false, invalid: false };
-        return { score: v === "pass" ? ev.points : 0, attempted: true, invalid: false };
-      }
-      case "reps_cap": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const reps = parseFloat(raw);
-        if (!Number.isFinite(reps) || reps < 0) return { score: 0, attempted: false, invalid: true };
-        return { score: clamp(Math.floor(reps), 0, ev.points), attempted: true, invalid: false };
-      }
-      case "strength_pct": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const lifted = parseFloat(raw);
-        if (!Number.isFinite(lifted) || lifted < 0) return { score: 0, attempted: false, invalid: true };
-        if (!stats.valid) return { score: 0, attempted: true, invalid: false };
-        const benchmarkLbs = ev.multiplier * stats.weight;
-        const shortfallPct = Math.max(0, ((benchmarkLbs - lifted) / stats.weight) * 100);
-        return { score: steppedScore(shortfallPct, 5, ev.points), attempted: true, invalid: false };
-      }
-      case "count_shortfall": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const reps = parseFloat(raw);
-        if (!Number.isFinite(reps) || reps < 0) return { score: 0, attempted: false, invalid: true };
-        const missed = Math.max(0, ev.benchmarkReps - reps);
-        return { score: steppedScore(missed, ev.increment, ev.points), attempted: true, invalid: false };
-      }
-      case "distance_shortfall": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const feet = parseFloat(raw);
-        if (!Number.isFinite(feet) || feet < 0) return { score: 0, attempted: false, invalid: true };
-        const shortfall = Math.max(0, ev.benchmarkFeet - feet);
-        return { score: steppedScore(shortfall, ev.increment, ev.points), attempted: true, invalid: false };
-      }
-      case "time_shortfall": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const sec = parseTime(raw);
-        if (sec == null) return { score: 0, attempted: false, invalid: true };
-        const shortfall = Math.max(0, ev.benchmarkSec - sec);
-        return { score: steppedScore(shortfall, ev.increment, ev.points), attempted: true, invalid: false };
-      }
-      case "time_over": {
-        const raw = val(fieldId(ev));
-        if (raw === "") return { score: 0, attempted: false, invalid: false };
-        const sec = parseTime(raw);
-        if (sec == null) return { score: 0, attempted: false, invalid: true };
-        const over = Math.max(0, sec - ev.benchmarkSec);
-        return { score: steppedScore(over, ev.increment, ev.points), attempted: true, invalid: false };
-      }
-      default:
-        return { score: 0, attempted: false, invalid: false };
-    }
+  function renderRows() {
+    const list = document.getElementById("scorecard");
+    list.innerHTML = STANDARD.events.map((ev, i) => `
+      <li class="event-row" data-event="${ev.id}">
+        <div class="ev-head">
+          <span class="ev-num">${i + 1}</span>
+          <div>
+            <h3 class="ev-name">${ev.distance ? `<span class="ev-distance">${ev.distance}</span> ` : ""}${ev.name}</h3>
+            <button type="button" class="details-toggle" aria-expanded="false" aria-controls="details-${ev.id}">Rules</button>
+          </div>
+        </div>
+        <div class="ev-anchors">
+          ${SCORECARD_LEVELS.map((l) => `
+            <div class="anchor" data-level="${l.id}">
+              <span class="anchor-label">${l.short}</span>
+              <span class="anchor-value" id="anchor-${ev.id}-${l.id}">—</span>
+            </div>`).join("")}
+        </div>
+        <div class="ev-input">
+          ${inputMarkup(ev)}
+          <p class="ev-hint" id="hint-${ev.id}" hidden>${INPUT_HINTS[ev.input]}</p>
+        </div>
+        <div class="ev-score">
+          <span class="score-line"><span class="score-earned" id="score-${ev.id}">—</span><span class="score-avail">/10</span></span>
+          <span class="level-chip" id="level-${ev.id}"></span>
+        </div>
+        <div class="ev-details" id="details-${ev.id}" hidden>
+          <ul>${ev.rules.map((r) => `<li>${r}</li>`).join("")}</ul>
+        </div>
+      </li>
+    `).join("");
   }
 
-  // ---------- Render table rows (once) ----------
-  function renderRows() {
-    const tbody = document.getElementById("test-table-body");
-    tbody.innerHTML = EVENTS.map((ev) => `
-      <tr data-event="${ev.num}">
-        <td class="col-num">${ev.num}</td>
-        <td class="col-event">${ev.name}</td>
-        <td class="col-benchmark" id="bench-${ev.num}">${ev.criteria}</td>
-        <td class="col-performance">${inputMarkup(ev)}</td>
-        <td class="col-score"><span class="score-earned" id="score-${ev.num}">0</span><span class="score-sep">/</span><span class="score-avail">${ev.points}</span></td>
-      </tr>
-    `).join("") + `
-      <tr>
-        <td colspan="2" class="col-event">Completion</td>
-        <td class="col-benchmark" id="bench-completion">Valid attempt at all 15 events</td>
-        <td class="col-performance">—</td>
-        <td class="col-score"><span class="score-earned" id="score-completion">0</span><span class="score-sep">/</span><span class="score-avail">1</span></td>
-      </tr>
-    `;
+  function renderGradeTable() {
+    const rows = STANDARD.grades.map((g, i) => {
+      const prev = STANDARD.grades[i - 1];
+      let range;
+      if (!prev) range = `${g.min}&ndash;100`;
+      else if (g.min === -Infinity) range = `&lt;${prev.min}`;
+      else range = `${g.min}&ndash;${prev.min - 1}`;
+      return `<tr><td class="num">${range}</td><th>${g.grade}</th><td>${g.label}</td></tr>`;
+    });
+    document.getElementById("grade-table-body").innerHTML = rows.join("");
+  }
+
+  function renderStatic() {
+    document.querySelectorAll("[data-standard-version]").forEach((el) => { el.textContent = STANDARD.version; });
+    document.querySelectorAll("[data-window-hours]").forEach((el) => { el.textContent = STANDARD.timeWindowHours; });
+    document.getElementById("copyright-year").textContent = new Date().getFullYear();
+    document.getElementById("provisional-note").hidden = STANDARD.status !== "provisional";
+
+    document.getElementById("sex-options").innerHTML = STANDARD.sexes.map((s) => `
+      <label class="segment"><input type="radio" name="sex" value="${s.id}"><span>${s.label}</span></label>`).join("");
+
+    document.getElementById("sources-list").innerHTML =
+      STANDARD.sources.map((s) => `<li>${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${s.citation}</a>` : s.citation}</li>`).join("");
+
+    renderGradeTable();
+    renderRows();
+  }
+
+  function setInvalid(el, invalid) {
+    el.classList.toggle("invalid", invalid);
+    if (invalid) el.setAttribute("aria-invalid", "true");
+    else el.removeAttribute("aria-invalid");
   }
 
   // ---------- Recalculate everything ----------
   function recalcAll() {
-    const stats = getStats();
-    let total = 0;
-    let allAttempted = true;
+    const demo = getDemographics();
+    const status = Scoring.demographicStatus(STANDARD, demo);
+    document.getElementById("demo-message").textContent = demographicMessage(demo, status);
+    setInvalid(document.getElementById("age"), demo.age != null && !status.age);
+    setInvalid(document.getElementById("bodyweight"), demo.bodyweight != null && !status.bodyweight);
 
-    EVENTS.forEach((ev) => {
-      const result = computeEvent(ev, stats);
-      document.getElementById(`score-${ev.num}`).textContent = result.score;
-      total += result.score;
-      if (!result.attempted) allAttempted = false;
-
-      // mark invalid inputs
-      const el = document.getElementById(fieldId(ev));
-      if (el) el.classList.toggle("invalid", !!result.invalid);
+    const values = {};
+    STANDARD.events.forEach((ev) => {
+      const { value, invalid } = readPerformance(ev);
+      values[ev.id] = value;
+      document.querySelectorAll(`[data-event="${ev.id}"] .ev-input input`).forEach((el) => setInvalid(el, invalid));
+      document.getElementById(`hint-${ev.id}`).hidden = !invalid;
     });
 
-    const completionScore = allAttempted ? 1 : 0;
-    document.getElementById("score-completion").textContent = completionScore;
-    total += completionScore;
+    const result = Scoring.computeResult(STANDARD, demo, values);
 
-    document.getElementById("total-score").textContent = total;
-    // A letter grade is only awarded once all 15 events have a valid attempt.
-    document.getElementById("total-grade").textContent = allAttempted ? gradeFor(total) : "—";
-  }
-
-  function recalcBenchmarks() {
-    const stats = getStats();
-    EVENTS.forEach((ev) => {
-      const { text, calculated } = benchmarkCellText(ev, stats);
-      const cell = document.getElementById(`bench-${ev.num}`);
-      cell.textContent = text;
-      cell.classList.toggle("calculated", calculated);
+    result.events.forEach((r) => {
+      const ev = STANDARD.events.find((e) => e.id === r.id);
+      const row = document.querySelector(`[data-event="${ev.id}"]`);
+      row.classList.toggle("calibrated", !!r.anchors);
+      SCORECARD_LEVELS.forEach((l) => {
+        const cell = document.getElementById(`anchor-${ev.id}-${l.id}`);
+        cell.textContent = r.anchors ? Scoring.formatValue(ev, r.anchors[l.id]) : "—";
+        cell.parentElement.classList.toggle("reached", r.level === l.id);
+      });
+      document.getElementById(`score-${ev.id}`).textContent = r.score == null ? "—" : r.score;
+      const chip = document.getElementById(`level-${ev.id}`);
+      chip.textContent = r.level ? levelLabel(r.level) : "";
+      chip.dataset.level = r.level || "";
     });
-    document.getElementById("bench-completion").classList.toggle("calculated", stats.valid);
-    recalcAll();
+
+    document.getElementById("total-score").textContent = result.total;
+    const gradeEl = document.getElementById("total-grade");
+    if (result.complete) {
+      gradeEl.textContent = result.grade.grade;
+      gradeEl.classList.remove("incomplete");
+      document.getElementById("grade-label").textContent = result.grade.label;
+    } else {
+      gradeEl.textContent = "Incomplete";
+      gradeEl.classList.add("incomplete");
+      document.getElementById("grade-label").textContent = "";
+    }
+
+    // Announce only when the grade itself changes, not on every keystroke.
+    const announce = result.complete ? `Grade ${result.grade.grade}, ${result.grade.label}.` : "Grade incomplete.";
+    const announcer = document.getElementById("grade-announce");
+    if (announcer.textContent !== announce) announcer.textContent = announce;
+    return result;
   }
 
   // ---------- State serialization (for share links) ----------
   function collectState() {
-    const state = {
-      hf: val("height-ft"), hi: val("height-in"), w: val("weight-lbs"),
-    };
-    EVENTS.forEach((ev) => {
-      state[`e${ev.num}`] = val(fieldId(ev));
+    const state = { v: STANDARD.version, age: val("age"), sex: checkedValue("sex"), bw: val("bodyweight") };
+    STANDARD.events.forEach((ev) => {
+      if (ev.input === "feet_inches") {
+        const { value } = readPerformance(ev);
+        state[ev.id] = value == null ? "" : String(Scoring.roundScore(value));
+      } else {
+        state[ev.id] = val(fieldId(ev)).trim();
+      }
     });
     return state;
   }
 
   function applyState(state) {
-    if (!state) return;
     const set = (id, v) => {
       const el = document.getElementById(id);
       if (el && v != null && v !== "") el.value = v;
     };
-    set("height-ft", state.hf);
-    set("height-in", state.hi);
-    set("weight-lbs", state.w);
-    EVENTS.forEach((ev) => {
-      set(fieldId(ev), state[`e${ev.num}`]);
+    set("age", state.age);
+    const sexOption = document.querySelector(`input[name="sex"][value="${CSS.escape(state.sex || "")}"]`);
+    if (sexOption) sexOption.checked = true;
+    set("bodyweight", state.bw);
+    STANDARD.events.forEach((ev) => {
+      const v = state[ev.id];
+      if (v == null || v === "") return;
+      if (ev.input === "feet_inches") {
+        const inches = Number(v);
+        if (!Number.isFinite(inches)) return;
+        set(fieldId(ev, "ft"), Math.floor(inches / 12));
+        set(fieldId(ev, "in"), Scoring.roundScore(inches % 12));
+      } else {
+        set(fieldId(ev), v);
+      }
     });
+  }
+
+  // ---------- Persistence (this browser only) ----------
+  // Storage can be unavailable (private mode, blocked site data), so every
+  // access is guarded and the page works without it.
+  const STORAGE_KEY = "all-rounder:scorecard";
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState())); } catch (e) { /* not persisted */ }
+  }
+
+  function loadSaved() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearSaved() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* nothing stored */ }
   }
 
   function loadFromUrl() {
@@ -340,10 +313,26 @@
     return state;
   }
 
+  // Shared links carry the standard version they were recorded under. Links
+  // from the original 15-event test have no version: keep only their
+  // bodyweight, since none of their event results map onto this standard.
+  function reconcileVersion(state) {
+    const notice = document.getElementById("version-notice");
+    if (!state.v) {
+      notice.textContent = `This link was recorded under the original 15-event All-Rounder. Those results don't carry over to Version ${STANDARD.version}; enter your results below to rescore.`;
+      notice.hidden = false;
+      return { bw: state.w };
+    }
+    if (state.v !== STANDARD.version) {
+      notice.textContent = `This link was recorded under All-Rounder Version ${state.v}. Results are shown rescored under Version ${STANDARD.version}.`;
+      notice.hidden = false;
+    }
+    return state;
+  }
+
   function buildShareUrl() {
-    const state = collectState();
     const params = new URLSearchParams();
-    Object.entries(state).forEach(([k, v]) => {
+    Object.entries(collectState()).forEach(([k, v]) => {
       if (v !== "") params.set(k, v);
     });
     const url = new URL(window.location.href);
@@ -351,35 +340,66 @@
     return url.toString();
   }
 
-  function buildShareText() {
-    const stats = getStats();
-    if (!stats.valid) {
-      return "Check out The All-Rounder, a general physical fitness test for men. Can you meet the standard?";
+  function buildShareText(result) {
+    const tag = `The All-Rounder (Version ${STANDARD.version})`;
+    if (result.complete) {
+      return `I scored ${result.total}% (${result.grade.grade} · ${result.grade.label}) on ${tag}. Think you can beat it?`;
     }
-    const total = document.getElementById("total-score").textContent;
-    const grade = document.getElementById("total-grade").textContent;
-    return `I scored ${total}/100 (${grade}) on The All-Rounder fitness test. Think you can beat it?`;
+    if (result.completedCount > 0) {
+      return `I'm ${result.completedCount}/${STANDARD.events.length} events into ${tag}: ${result.total} points so far.`;
+    }
+    return `Check out ${tag}: 10 events, 10 hours, 100 points. How all-round is your fitness?`;
   }
 
   // ---------- Wire up ----------
   function init() {
-    renderRows();
+    renderStatic();
 
-    applyState(loadFromUrl());
+    // A shared link wins over saved entries. Opening one doesn't overwrite
+    // the saved scorecard until the visitor edits something.
+    const urlState = loadFromUrl();
+    if (urlState) applyState(reconcileVersion(urlState));
+    else {
+      const saved = loadSaved();
+      if (saved) applyState(saved);
+    }
 
-    recalcBenchmarks();
+    let result = recalcAll();
 
-    document.getElementById("stats-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      recalcBenchmarks();
+    const onEdit = () => {
+      result = recalcAll();
+      saveState();
+    };
+    ["demo-form", "scorecard"].forEach((id) => {
+      const el = document.getElementById(id);
+      el.addEventListener("input", onEdit);
+      el.addEventListener("change", onEdit);
     });
 
-    document.getElementById("test-table-body").addEventListener("input", recalcAll);
-    document.getElementById("test-table-body").addEventListener("change", recalcAll);
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      document.getElementById("demo-form").reset();
+      document.querySelectorAll("#scorecard input").forEach((el) => { el.value = ""; });
+      clearSaved();
+      document.getElementById("version-notice").hidden = true;
+      if (window.location.search) {
+        history.replaceState(null, "", window.location.pathname + window.location.hash);
+      }
+      result = recalcAll();
+      document.getElementById("age").focus();
+    });
+    document.getElementById("demo-form").addEventListener("submit", (e) => e.preventDefault());
+
+    document.getElementById("scorecard").addEventListener("click", (e) => {
+      const toggle = e.target.closest(".details-toggle");
+      if (!toggle) return;
+      const open = toggle.getAttribute("aria-expanded") !== "true";
+      toggle.setAttribute("aria-expanded", String(open));
+      document.getElementById(toggle.getAttribute("aria-controls")).hidden = !open;
+    });
 
     document.getElementById("share-btn").addEventListener("click", async () => {
       const url = buildShareUrl();
-      const text = buildShareText();
+      const text = buildShareText(result);
       const btn = document.getElementById("share-btn");
       const original = btn.textContent;
       const flash = (label, delay) => {

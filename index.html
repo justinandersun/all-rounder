@@ -4,228 +4,173 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The All-Rounder — A General Physical Fitness Test</title>
-<meta name="description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E. Enter your height and weight to calculate the benchmarks you should strive for.">
+<meta name="description" content="A general physical fitness test: 10 events, 10 hours, 100 points. Benchmarks calibrated to your age, sex, and bodyweight where relevant, graded A through D.">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="The All-Rounder">
-<meta property="og:description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E.">
+<meta property="og:description" content="A general physical fitness test: 10 events, 10 hours, 100 points, graded A through D.">
 <meta property="og:image" content="og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The All-Rounder">
-<meta name="twitter:description" content="A general physical fitness test: 15 events, 100 points, one standard, graded A through E.">
+<meta name="twitter:description" content="A general physical fitness test: 10 events, 10 hours, 100 points, graded A through D.">
 <meta name="twitter:image" content="og-image.png">
 
+<link rel="preload" href="fonts/archivo-latin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="sheet">
+<main class="sheet">
 
-  <header class="masthead">
+  <header class="hero">
     <h1>The All-Rounder</h1>
-    <p class="subtitle">A General Physical Fitness Test</p>
+    <p class="tagline">10 events. 10 hours. 100 points.</p>
+    <p class="lede">
+      Take the All-Rounder fitness challenge! Complete ten events covering strength, power,
+      endurance, speed, and cardio, in any order, within ten hours. Each event is scored
+      against benchmarks for your age, sex, and bodyweight where relevant.
+    </p>
   </header>
 
-  <details class="disclosure">
-    <summary><h2>Why It Matters</h2></summary>
-    <div class="disclosure-content">
-      <p>
-        Modern life is comfortable, and comfort has a cost. Cars, chairs, and screens have removed
-        the daily physical demands that once kept men capable. Left unchecked,
-        this comfort produces soft, weak, and fragile bodies.
-      </p>
-      <p>
-        No single discipline is enough. To score well, you have to lift, pull, carry, sprint, run,
-        swim, and move well. This test sets out a practical, evidence-informed standard of general
-        physical fitness measured against
-        benchmarks a man can actually train toward. Physical fitness is the foundation on which the
-        rest of life is built, so it is worth deliberate investment.
-      </p>
+  <div class="version-notice" id="version-notice" hidden></div>
+
+  <section class="scorecard-section" aria-labelledby="scorecard-heading">
+    <div class="section-head">
+      <h2 id="scorecard-heading">Your Scorecard</h2>
+      <button type="button" class="reset-btn" id="reset-btn">Reset</button>
     </div>
-  </details>
-
-  <details class="disclosure">
-    <summary><h2>How It Works</h2></summary>
-    <div class="disclosure-content">
-      <p>
-        The test is designed to be completed in one day. It spans 15 events worth 100 total points, evaluated on one standard.
-      </p>
-      <p>
-        Every event is scored against a fixed benchmark drawn from your height or bodyweight. Four
-        movement checks are pass/fail and worth one point each. The remaining events award partial
-        credit: meeting or exceeding the benchmark earns full points, and any shortfall costs points.
-      </p>
-      <p>
-        A valid attempt at all 15 events earns one additional point toward your total. A letter
-        grade is awarded only once all 15 events have been attempted:
-      </p>
-      <table class="grade-table">
-        <thead>
-          <tr><th class="grade-score">Score</th><th>Grade</th><th class="grade-desc">Interpretation</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="grade-score">90&ndash;100</td>
-            <th>A</th>
-            <td class="grade-desc"><strong>All-Rounder.</strong> Broadly capable with no meaningful weaknesses.</td>
-          </tr>
-          <tr>
-            <td class="grade-score">80&ndash;89</td>
-            <th>B</th>
-            <td class="grade-desc"><strong>Fit.</strong> Strong general fitness with room to improve.</td>
-          </tr>
-          <tr>
-            <td class="grade-score">70&ndash;79</td>
-            <th>C</th>
-            <td class="grade-desc"><strong>Baseline.</strong> Meets a reasonable floor of general fitness, but has clear weaknesses.</td>
-          </tr>
-          <tr>
-            <td class="grade-score">60&ndash;69</td>
-            <th>D</th>
-            <td class="grade-desc"><strong>Developing.</strong> Some capability is present, but overall fitness is below the baseline.</td>
-          </tr>
-          <tr>
-            <td class="grade-score">&lt;60</td>
-            <th>E</th>
-            <td class="grade-desc"><strong>Unfit.</strong> Significant fitness gaps; focus on building physical capacity.</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>100 means no weaknesses. You receive no bonus points for specialization.</p>
-    </div>
-  </details>
-
-  <section class="panel panel-last">
-    <h2>The Standard</h2>
-    <p>Enter your height and weight to calculate your benchmarks. Then record your performance on each event to receive a grade.</p>
-
-    <form id="stats-form" class="stats-form">
-      <div class="stats-fields">
+    <div class="demographics">
+      <form id="demo-form" class="demo-fields" autocomplete="off">
         <div class="field-group">
-          <label for="height-ft">Height</label>
+          <label class="field-label" for="age">Age</label>
           <div class="inline-fields">
-            <input type="number" id="height-ft" min="0" max="8" inputmode="numeric" placeholder="FT" required>
-            <span class="unit-label">ft</span>
-            <input type="number" id="height-in" min="0" max="11" inputmode="numeric" placeholder="IN" required>
-            <span class="unit-label">in</span>
+            <input type="number" id="age" min="18" max="120" inputmode="numeric" placeholder="—" aria-describedby="age-unit demo-message">
+            <span class="unit-label" id="age-unit">years</span>
           </div>
         </div>
         <div class="field-group">
-          <label for="weight-lbs">Weight</label>
-          <div class="inline-fields">
-            <input type="number" id="weight-lbs" min="0" max="600" inputmode="numeric" placeholder="LBS" required>
-            <span class="unit-label">lbs</span>
+          <span class="field-label" id="sex-label">Sex</span>
+          <div class="segmented" id="sex-options" role="radiogroup" aria-labelledby="sex-label">
+            <!-- options injected by script.js -->
           </div>
         </div>
-        <button type="submit" id="calculate-btn">Calculate</button>
-      </div>
-    </form>
+        <div class="field-group">
+          <label class="field-label" for="bodyweight">Bodyweight</label>
+          <div class="inline-fields">
+            <input type="number" id="bodyweight" min="80" max="500" inputmode="decimal" placeholder="—" aria-describedby="bodyweight-unit demo-message">
+            <span class="unit-label" id="bodyweight-unit">lbs</span>
+          </div>
+        </div>
+      </form>
+      <p class="demo-message" id="demo-message" aria-live="polite"></p>
+    </div>
+    <ol class="scorecard" id="scorecard">
+      <!-- rows injected by script.js -->
+    </ol>
+  </section>
 
-    <div class="table-scroll">
-      <table class="test-table" id="test-table">
-        <thead>
-          <tr>
-            <th class="col-num">#</th>
-            <th class="col-event">Event</th>
-            <th class="col-benchmark">Benchmark</th>
-            <th class="col-performance">Performance</th>
-            <th class="col-score">Score</th>
-          </tr>
-        </thead>
-        <tbody id="test-table-body">
-          <!-- rows injected by script.js -->
-        </tbody>
-        <tbody class="totals-body">
-          <tr>
-            <td colspan="4" class="total-label">TOTAL</td>
-            <td class="total-score-cell"><span id="total-score">0</span></td>
-          </tr>
-        </tbody>
-      </table>
+  <section class="result">
+    <div class="result-total">
+      <span class="result-label">Total</span>
+      <span class="result-value"><span id="total-score">0</span><span class="result-of">%</span></span>
+    </div>
+    <div class="result-grade">
+      <span class="result-label">Grade</span>
+      <span class="result-value"><span id="total-grade">—</span><span class="result-of result-level" id="grade-label"></span></span>
+    </div>
+    <p class="visually-hidden" id="grade-announce" aria-live="polite"></p>
+    <div class="result-actions">
+      <button id="share-btn" type="button">Share Your Results</button>
     </div>
   </section>
 
-  <div class="grade-banner">
-    <span class="grade-banner-label">Your General Fitness Grade:</span>
-    <span class="grade-banner-value" id="total-grade">&mdash;</span>
+  <section class="explanation" aria-labelledby="how-heading">
+    <h2 id="how-heading">How Scoring Works</h2>
+    <p>
+      Each event is worth 10 points. Your benchmarks set four anchors:
+      Advanced (10 points), Intermediate (7.5), Beginner (5), and Unfit (2.5).
+      Performances between anchors earn proportional credit. Meeting Advanced earns the full
+      10.
+    </p>
+    <p>
+      An official grade requires a valid result in all ten events. If any event is missing,
+      the result is <strong>Incomplete</strong>.
+    </p>
+    <table class="grade-table">
+      <thead>
+        <tr><th>Score</th><th>Grade</th><th>Level</th></tr>
+      </thead>
+      <tbody id="grade-table-body">
+        <!-- rows injected by script.js -->
+      </tbody>
+    </table>
+  </section>
+
+  <section class="about" aria-labelledby="about-heading">
+    <h2 id="about-heading">About the Challenge</h2>
+
+    <details class="disclosure">
+      <summary>Methodology</summary>
+      <div class="disclosure-content">
+        <p>
+          The ten events span the major domains of general physical fitness: maximal strength
+          (squat, bench press, deadlift), relative upper-body strength (pullups), muscular
+          endurance (pushups, plank), lower-body power (broad jump), anaerobic capacity and
+          change of direction (300-yard shuttle), and aerobic capacity on land and in water
+          (1.5-mile run, half-mile swim).
+        </p>
+        <p>
+          Benchmarks are calibrated by the demographic variables each event's norms depend on,
+          using published norms and performance standards where available. Barbell lifts are
+          scaled to sex and bodyweight with a modest age adjustment. Bodyweight-independent
+          events are calibrated by age and sex. Bodyweight never makes running, swimming, or
+          shuttle standards easier.
+        </p>
+        <p>
+          Anchors are drawn from military fitness test scoring tables, Cooper Institute norms,
+          and established strength standards, adapted where the protocol differs.[1&ndash;9]
+          Cardiorespiratory fitness, muscular strength, and push-up capacity are each
+          independently associated with lower all-cause mortality and cardiovascular risk.[10&ndash;13]
+        </p>
+        <p>
+          The All-Rounder is independently developed. It has not been clinically validated as a
+          complete fitness assessment and is not a medical standard or diagnosis. Maximal
+          lifting, running, and swimming carry risk: test within your abilities, use proper
+          technique and safety equipment, and seek medical guidance when appropriate.
+        </p>
+        <p class="provisional-note" id="provisional-note">
+          Version <span data-standard-version>1.3</span> is provisional. Benchmarks will
+          change as the evidence review is completed, and every result is labeled with the
+          version it was scored under.
+        </p>
+      </div>
+    </details>
+
+    <details class="disclosure">
+      <summary>Sources</summary>
+      <div class="disclosure-content">
+        <ol class="sources-list" id="sources-list">
+          <!-- injected by script.js -->
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <div class="version-row">
+    <p class="standard-version">Version <span data-standard-version>1.3</span></p>
   </div>
 
-  <div class="share-row">
-    <button id="share-btn" type="button">Share Your Results</button>
-  </div>
-
-  <footer class="masthead footer">
-    <div class="disclosures">
-      <details class="disclosure">
-        <summary><h3>Methodology</h3></summary>
-        <div class="disclosure-content">
-          <p>
-            The All-Rounder is a practical standard for general male fitness. Its benchmarks draw
-            from established strength standards, field fitness tests, coaching benchmarks for
-            physical capability, and historical all-around fitness standards.[1&ndash;5] Functional
-            movement tests are also informed by research associating balance and the ability to
-            rise from the floor with health and functional outcomes later in life.[6&ndash;7]
-          </p>
-          <p>
-            The standards are intentionally broad rather than specialized. They are designed to
-            represent a solid intermediate level of strength, conditioning, muscular endurance,
-            power, movement, grip, carrying capacity, running, and swimming. Meeting every
-            benchmark should require regular training across multiple physical domains without
-            requiring elite performance in any one of them.
-          </p>
-          <p>
-            The All-Rounder is a <strong>standard</strong>, not a population norm. A population
-            norm describes how a person compares with peers; a standard defines a level of
-            capability worth achieving and maintaining. The benchmarks therefore do not adjust
-            downward with age. The goal is to measure the physical capability you possess, not
-            your fitness relative to others your age.
-          </p>
-        </div>
-      </details>
-
-      <details class="disclosure">
-        <summary><h3>Disclaimer</h3></summary>
-        <div class="disclosure-content">
-          <p>
-            The All-Rounder is an independently developed fitness challenge and has not been
-            clinically validated as a complete fitness assessment. Its benchmarks should not be
-            interpreted as medical standards, diagnoses, or guarantees of health, longevity, or
-            ability to perform any particular occupation or emergency task.
-          </p>
-          <p>
-            Exercise and fitness testing involve risk, particularly maximal or near-maximal
-            lifting, running, and swimming. Participants are responsible for exercising within
-            their abilities, using appropriate technique and safety equipment, and seeking
-            qualified medical or professional guidance when appropriate.
-          </p>
-        </div>
-      </details>
-
-      <details class="disclosure">
-        <summary><h3>Sources</h3></summary>
-        <div class="disclosure-content">
-          <ol class="sources-list">
-            <li>McKay, Brett &amp; Kate, with Matt Reynolds. &ldquo;How Much Ya Bench? Strength Benchmarks for Men.&rdquo; <em>The Art of Manliness</em>, 2021.</li>
-            <li>McKay, Brett &amp; Kate, with Dan John. &ldquo;Physical Benchmarks Every Man Should Meet, At Every Age.&rdquo; <em>The Art of Manliness</em>, 2022.</li>
-            <li>McKay, Brett &amp; Kate. &ldquo;Every Man Should Be Able to Save His Own Life: 5 Fitness Benchmarks a Man Must Master.&rdquo; Based on Earle Liederman&rsquo;s <em>Endurance</em> (1926). <em>The Art of Manliness</em>.</li>
-            <li>Campbell, Adam &amp; Comstock. &ldquo;10 Standards to Assess Your Fitness Level.&rdquo; <em>Men&rsquo;s Health</em>, 2015.</li>
-            <li>The Cooper Institute. &ldquo;50 Years of the Cooper 12-Minute Run&rdquo; and &ldquo;Fitness Norms and Fitness Standards are Apples and Oranges.&rdquo;</li>
-            <li>de Brito, L.B.B., et al. &ldquo;Ability to Sit and Rise From the Floor as a Predictor of All-Cause Mortality.&rdquo; <em>European Journal of Preventive Cardiology</em>, 2014; 21(7):892&ndash;898.</li>
-            <li>Ara&uacute;jo, C.G.S., et al. &ldquo;Successful 10-Second One-Legged Stance Performance Predicts Survival in Middle-Aged and Older Individuals.&rdquo; <em>British Journal of Sports Medicine</em>, 2022; 56(17):975&ndash;980.</li>
-          </ol>
-        </div>
-      </details>
-    </div>
-
-    <p class="copyright">Made by <a href="https://andersun.com" target="_blank">Justin Anderson</a>.</p>
+  <footer class="footer">
+    <p class="copyright">&copy; <span id="copyright-year">2026</span> <a href="https://andersun.com" target="_blank" rel="noopener">Justin Andersun</a></p>
   </footer>
 
-</div>
+</main>
 
+<script src="standard.js"></script>
+<script src="scoring.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
